@@ -2,8 +2,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
-from .forms import TopicForm, EntryForm
-from .models import Topic, Entry
+from .forms import TopicForm, EntryForm, CommentForm
+from .models import Topic, Entry, Comment
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 def index(request):
@@ -83,4 +83,22 @@ def edit_entry(request, entry_id):
 
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)
+
+def comment(request, entry_id):
+    """Add new comments"""
+    entry = Entry.objects.get(id=entry_id)
+    topic = entry.topic
+    if request.method != 'POST':
+        commentform = CommentForm()
+    else:
+        commentform = CommentForm(data=request.POST)
+        if commentform.is_valid():
+            add_comment = commentform.save(commit=False)
+            add_comment.entry = entry
+            add_comment.owner = request.user
+            add_comment.save()
+            return HttpResponseRedirect(reverse('learning_logs:topic', args=[topic.id]))
+
+    context = {'entry': entry, 'topic': topic, 'commentform': commentform}
+    return render(request, 'learning_logs/comment.html', context)
 

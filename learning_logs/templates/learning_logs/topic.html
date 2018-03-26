@@ -24,6 +24,21 @@
         <div class="panel-body">
             {{ entry.text|linebreaks }}
         </div>
+        
+        <ul class="list-group"></ul>
+        <li class="list-group-item">Comments 
+            <a href="{% url 'learning_logs:comment' entry.id %}">Add comment</a>
+        </li>
+            {% for comment in entry.comment_set.all %}
+            <ul>    
+                <li class="list-group-item">
+                    {{ comment.owner}} -- {{ comment.date_added|date:'M d, Y H:i' }}
+                {{ comment.text|linebreaks }}</li>
+            </ul>
+            {% empty %}
+            <p>There has no comments yet.</p>
+            {% endfor %}
+        
         <div><!-- panel -->
     {% empty %}
         There are no entries for this topic yet.

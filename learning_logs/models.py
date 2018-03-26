@@ -23,3 +23,13 @@ class Entry(models.Model):
     def __str__(self):
         """返回模型的字符串表示"""
         return self.text[:50] + "..."
+
+class Comment(models.Model):
+    """comments"""
+    entry = models.ForeignKey(Entry)
+    text = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User)
+
+    def __str__(self):
+        return self.text
